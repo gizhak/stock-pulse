@@ -1,4 +1,5 @@
-const { YahooFinanceProvider } = require('./providers/YahooFinanceProvider');
+const { MockDataProvider } = require('./providers/MockDataProvider');
+// const { YahooFinanceProvider } = require('./providers/YahooFinanceProvider');
 const { TechnicalIndicators } = require('./indicators/TechnicalIndicators');
 const { SignalGenerator } = require('./signals/SignalGenerator');
 const { TelegramService } = require('./services/telegram');
@@ -13,7 +14,9 @@ const WATCH_LIST = [
 
 class StockScreener {
   constructor() {
-    this.dataProvider = new YahooFinanceProvider();
+    // Using MockDataProvider temporarily (Yahoo Finance has ESM issues)
+    // Switch back to YahooFinanceProvider once fixed
+    this.dataProvider = new MockDataProvider();
     this.telegramService = new TelegramService();
   }
 

@@ -8,7 +8,13 @@ class YahooFinanceProvider extends BaseDataProvider {
 
   async getYahooFinance() {
     if (!this.yahooFinance) {
-      this.yahooFinance = (await import('yahoo-finance2')).default;
+      try {
+        const module = await import('yahoo-finance2');
+        this.yahooFinance = module.default || module;
+      } catch (error) {
+        console.error('Failed to import yahoo-finance2:', error.message);
+        throw new Error('Yahoo Finance module not available');
+      }
     }
     return this.yahooFinance;
   }
@@ -16,6 +22,11 @@ class YahooFinanceProvider extends BaseDataProvider {
   async fetchStockData(symbol) {
     try {
       const yf = await this.getYahooFinance();
+
+      if (typeof yf.quote !== 'function') {
+        throw new Error('yf.quote is not available - trying alternative method');
+      }
+
       const quote = await yf.quote(symbol);
       return {
         symbol: quote.symbol,
@@ -37,6 +48,11 @@ class YahooFinanceProvider extends BaseDataProvider {
   async fetchHistoricalData(symbol, interval = '1d', period = '2mo') {
     try {
       const yf = await this.getYahooFinance();
+
+      if (typeof yf.historical !== 'function') {
+        throw new Error('yf.historical is not available');
+      }
+
       const result = await yf.historical(symbol, {
         period,
         interval,
