@@ -1,7 +1,6 @@
 const { YahooFinanceProvider } = require('./providers/YahooFinanceProvider');
 const { TechnicalIndicators } = require('./indicators/TechnicalIndicators');
 const { SignalGenerator } = require('./signals/SignalGenerator');
-const { ClaudeService } = require('./services/claude');
 const { TelegramService } = require('./services/telegram');
 const { Stock } = require('./models/StockScan');
 
@@ -15,8 +14,25 @@ const WATCH_LIST = [
 class StockScreener {
   constructor() {
     this.dataProvider = new YahooFinanceProvider();
-    this.claudeService = new ClaudeService();
     this.telegramService = new TelegramService();
+  }
+
+  generateExplanation(symbol, signal, indicators, stockData) {
+    const signalEmoji = signal.signal === 'BUY' ? '🟢' : signal.signal === 'SELL' ? '🔴' : '🟡';
+
+    let explanation = `${signalEmoji} ${symbol}: סימן ${signal.signal}\n\n`;
+    explanation += `📊 אינדיקטורים:\n`;
+    explanation += `• RSI: ${indicators.rsi?.toFixed(2)} ${indicators.rsi > 70 ? '(קנוי יתר)' : indicators.rsi < 30 ? '(נמכר יתר)' : '(נורמלי)'}\n`;
+    explanation += `• MA50: $${indicators.ma50?.toFixed(2)}\n`;
+    explanation += `• מחיר נוכחי: $${stockData.price?.toFixed(2)}\n`;
+    explanation += `• היקף: ${stockData.volumeRatio?.toFixed(1)}% מממוצע\n\n`;
+    explanation += `🎯 סיבות:\n`;
+    signal.reason.forEach(r => {
+      explanation += `• ${r}\n`;
+    });
+    explanation += `\n📡 מקור נתונים: Yahoo Finance`;
+
+    return explanation;
   }
 
   async scan() {
@@ -81,13 +97,8 @@ class StockScreener {
 
     const signal = SignalGenerator.generate(stockData, indicators);
 
-    // Get Hebrew explanation from Claude
-    const explanation = await this.claudeService.generateSignalExplanation(
-      symbol,
-      signal,
-      indicators,
-      stockData
-    );
+    // Generate Hebrew explanation (no Claude API needed)
+    const explanation = this.generateExplanation(symbol, signal, indicators, stockData);
 
     return {
       symbol,
