@@ -1,0 +1,145 @@
+.stock-table-container {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.table-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table-header h2 {
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.filters {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #999;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.85rem;
+}
+
+.filter-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.filter-btn.active {
+  background: rgba(0, 212, 255, 0.2);
+  border-color: #00d4ff;
+  color: #00d4ff;
+}
+
+.filter-btn.active.green {
+  background: rgba(0, 255, 0, 0.15);
+  border-color: #00ff00;
+  color: #00ff00;
+}
+
+.filter-btn.active.red {
+  background: rgba(255, 51, 51, 0.15);
+  border-color: #ff3333;
+  color: #ff3333;
+}
+
+.filter-btn.active.yellow {
+  background: rgba(255, 170, 0, 0.15);
+  border-color: #ffaa00;
+  color: #ffaa00;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.stock-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.stock-table thead th {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #ccc;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.col-symbol {
+  width: 10%;
+  min-width: 80px;
+}
+
+.col-price {
+  width: 12%;
+  min-width: 100px;
+}
+
+.col-rsi {
+  width: 10%;
+  min-width: 80px;
+}
+
+.col-ma50 {
+  width: 12%;
+  min-width: 100px;
+}
+
+.col-volume {
+  width: 12%;
+  min-width: 100px;
+}
+
+.col-signal {
+  width: 15%;
+  min-width: 120px;
+}
+
+.col-actions {
+  width: 5%;
+  min-width: 50px;
+}
+
+.no-data {
+  text-align: center;
+  padding: 2rem !important;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .table-header {
+    padding: 1rem;
+  }
+
+  .filters {
+    gap: 0.5rem;
+  }
+
+  .filter-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+  }
+
+  .stock-table thead th {
+    padding: 0.75rem;
+    font-size: 0.75rem;
+  }
+}
