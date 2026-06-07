@@ -18,6 +18,7 @@ class StockScreener {
     // Switch back to YahooFinanceProvider once fixed
     this.dataProvider = new MockDataProvider();
     this.telegramService = new TelegramService();
+    this.latestResults = null;
   }
 
   generateExplanation(symbol, signal, indicators, stockData) {
@@ -73,7 +74,15 @@ class StockScreener {
       }
     }
 
-    // Save to MongoDB
+    // Save to Memory (for display)
+    const allStocks = [
+      ...results.buySignals,
+      ...results.sellSignals,
+      ...results.holdSignals,
+    ];
+    this.latestResults = allStocks;
+
+    // Save to MongoDB (if available)
     if (process.env.MONGODB_URI) {
       await this.saveResults(results);
     }
@@ -145,16 +154,22 @@ class StockScreener {
   }
 
   async getLatestScans() {
-    if (!process.env.MONGODB_URI) {
-      return [];
+    // Return latest results from memory first
+    if (this.latestResults && this.latestResults.length > 0) {
+      return this.latestResults;
     }
 
-    try {
-      return await Stock.find().sort({ updatedAt: -1 });
-    } catch (error) {
-      console.error('Error fetching from MongoDB:', error);
-      return [];
+    // Fall back to MongoDB if available
+    if (process.env.MONGODB_URI) {
+      try {
+        return await Stock.find().sort({ updatedAt: -1 });
+      } catch (error) {
+        console.error('Error fetching from MongoDB:', error);
+        return [];
+      }
     }
+
+    return [];
   }
 }
 
