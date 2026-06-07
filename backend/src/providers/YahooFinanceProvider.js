@@ -1,10 +1,22 @@
-const yahooFinance = require('yahoo-finance2').default;
 const { BaseDataProvider } = require('./BaseDataProvider');
 
 class YahooFinanceProvider extends BaseDataProvider {
+  constructor() {
+    super();
+    this.yahooFinance = null;
+  }
+
+  async getYahooFinance() {
+    if (!this.yahooFinance) {
+      this.yahooFinance = (await import('yahoo-finance2')).default;
+    }
+    return this.yahooFinance;
+  }
+
   async fetchStockData(symbol) {
     try {
-      const quote = await yahooFinance.quote(symbol);
+      const yf = await this.getYahooFinance();
+      const quote = await yf.quote(symbol);
       return {
         symbol: quote.symbol,
         price: quote.regularMarketPrice,
@@ -24,7 +36,8 @@ class YahooFinanceProvider extends BaseDataProvider {
 
   async fetchHistoricalData(symbol, interval = '1d', period = '2mo') {
     try {
-      const result = await yahooFinance.historical(symbol, {
+      const yf = await this.getYahooFinance();
+      const result = await yf.historical(symbol, {
         period,
         interval,
       });
